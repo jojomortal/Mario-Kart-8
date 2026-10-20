@@ -20,10 +20,7 @@ jobs:
         run: |
           mkdir -p ios
           mkdir -p crates
-          # Injeta a chave armazenada nos seus Secrets
           echo "${{ secrets.PROD_KEYS_CONTEUDO }}" > prod.keys
-          
-          # Baixa um homebrew .nsp válido e leve para o compilador aceitar a estrutura PFS0
           curl -L -o base.nsp "https://github.com"
 
       - name: Preparar Scripts
@@ -35,7 +32,7 @@ jobs:
       - name: Compilar Jogo para iOS
         env:
           TEAM: "12345ABCDE"
-        run: ./make-ios.sh || echo "Tentando compilar build geral" && ./build.sh
+        run: echo "2" | ./make-ios.sh || echo "Tentando compilar build geral" && echo "2" | ./build.sh
 
       - name: Criar Estrutura do IPA
         run: |
