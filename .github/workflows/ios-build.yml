@@ -16,10 +16,13 @@ jobs:
         with:
           targets: aarch64-apple-ios
 
-      - name: Criar pastas caso faltem
+      - name: Criar pastas e injetar prod.keys real
+        env:
+          KEYS_SECRET: ${{ secrets.PROD_KEYS_CONTEUDO }}
         run: |
           mkdir -p ios
           mkdir -p crates
+          echo "$KEYS_SECRET" > prod.keys
 
       - name: Preparar Scripts
         run: |
@@ -34,8 +37,8 @@ jobs:
 
       - name: Criar Estrutura do IPA
         run: |
-          mkdir -p Payload/Mush8.app
-          cp -r ios/*.app Payload/ 2>/dev/null || cp -r *.app Payload/ 2>/dev/null || true
+          mkdir -p Payload
+          cp -r ios/*.app Payload/ 2>/dev/null || cp -r *.app Payload/ 2>/dev/null || mkdir Payload/Jogo.app
           zip -r jogo.ipa Payload
 
       - name: Disponibilizar IPA para Download
