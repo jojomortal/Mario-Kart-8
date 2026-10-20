@@ -101,19 +101,9 @@ remember() {
 [ "$(uname -s)" = Darwin ] || fail "Mush8 builds on macOS only."
 [ "$(uname -m)" = arm64 ] || fail "Mush8 needs an Apple Silicon Mac (M1 or newer)."
 
-bold "Checking Xcode"
-if ! xcodebuild -version >/dev/null 2>&1; then
-  XCODE="$(ls -d /Applications/Xcode*.app 2>/dev/null | head -1)"
-  [ -n "$XCODE" ] || fail "Install Xcode from the App Store (Xcode 26 or later), open it once, then run this again."
-  echo "Xcode is installed but not selected. Selecting it (asks for your Mac password):"
-  sudo xcode-select -s "$XCODE/Contents/Developer"
-fi
-XCODE_MAJOR="$(xcodebuild -version | awk '/^Xcode/ {split($2, v, "."); print v[1]}')"
-[ "${XCODE_MAJOR:-0}" -ge 26 ] || fail "Xcode $XCODE_MAJOR is too old: update Xcode to 26 or later from the App Store."
-if ! xcodebuild -license check >/dev/null 2>&1; then
-  echo "Accepting the Xcode license (asks for your Mac password):"
-  sudo xcodebuild -license accept
-fi
+
+
+
 xcodebuild -version | head -1
 
 pick "What do you want to build?" "Mush8 for this Mac" "Mush8 for iPhone / iPad"
