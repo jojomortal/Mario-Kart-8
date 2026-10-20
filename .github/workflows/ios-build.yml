@@ -1,0 +1,44 @@
+name: Gerar IPA iOS
+
+on:
+  workflow_dispatch: # Permite que você clique em um botão para iniciar
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios
+
+      - name: Criar pastas caso faltem
+        run: |
+          mkdir -p ios
+          mkdir -p crates
+
+      - name: Preparar Scripts
+        run: |
+          chmod +x make-ios.sh
+          chmod +x make-app.sh
+          chmod +x build.sh
+
+      - name: Compilar Jogo para iOS
+        run: ./make-ios.sh || echo "Tentando compilar build geral" && ./build.sh
+
+      - name: Criar Estrutura do IPA
+        run: |
+          mkdir -p Payload/Mush8.app
+          # Tenta mover os arquivos compilados para a pasta do aplicativo
+          cp -r ios/*.app Payload/ 2>/dev/null || cp -r *.app Payload/ 2>/dev/null || true
+          zip -r jogo.ipa Payload
+
+      - name: Disponibilizar IPA para Download
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mario-Kart-8-IPA
+          path: jogo.ipa
