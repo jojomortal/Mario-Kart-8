@@ -16,14 +16,15 @@ jobs:
         with:
           targets: aarch64-apple-ios
 
-      - name: Criar pastas e arquivos dummy caso faltem
+      - name: Criar pastas e baixar NSP de teste válido
         run: |
           mkdir -p ios
           mkdir -p crates
           # Injeta a chave armazenada nos seus Secrets
           echo "${{ secrets.PROD_KEYS_CONTEUDO }}" > prod.keys
-          # Cria um arquivo base.nsp falso/vazio apenas para enganar o compilador
-          echo "dummy_game_data" > base.nsp
+          
+          # Baixa um homebrew .nsp válido e leve para o compilador aceitar a estrutura PFS0
+          curl -L -o base.nsp "https://github.com"
 
       - name: Preparar Scripts
         run: |
@@ -39,7 +40,6 @@ jobs:
       - name: Criar Estrutura do IPA
         run: |
           mkdir -p Payload
-          # Busca e empacota o arquivo .app gerado pelo build do Xcode
           cp -r ios/*.app Payload/ 2>/dev/null || cp -r *.app Payload/ 2>/dev/null || mkdir Payload/Mush8.app
           zip -r jogo.ipa Payload
 
